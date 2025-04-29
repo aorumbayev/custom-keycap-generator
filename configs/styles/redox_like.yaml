@@ -1,0 +1,49 @@
+# configs/styles/redox_like.yaml
+# Based on default.yaml, adjusted for smoother curves
+
+# All lengths in millimeters, all angles in degrees
+global:
+    # Tolerances and wall thickness remain the same
+    tol: 0.1
+    tol_tight: 0.1
+    wall: 1.2
+    inner_rad: 0.6
+
+    # Key height and corner radius remain the same
+    key_h: 18.0
+    key_r: 6.0
+
+    # --- Adjustments for smoother style ---
+    # Gentler slopes
+    back_slope: 3.0 # Was 5.0
+    front_slope: 6.0 # Was 10.0
+    side_slope: 8.0 # Was 10.0
+    # Slightly more pronounced curve
+    back_curve: 1.5 # Was 1.0
+    front_curve: 1.5 # Was 1.0
+    # -------------------------------------
+
+    stem:
+        type: minimal
+
+# Base heights - keep these the same as default for now
+# Specific layouts might override these anyway
+bases:
+    R1:
+        front_dy: 10.1
+        back_dy: 7.9
+    R2:
+        front_dy: 9.3
+        back_dy: 8.0
+    R3:
+        front_dy: 9.3
+        back_dy: 9.0
+    R4:
+        front_dy: 10.8
+        back_dy: 11.4
+
+# Modifiers remain the same
+modifiers:
+    convex:
+        back_curve: -1.0
+        front_curve: -1.0

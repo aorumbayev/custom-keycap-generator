@@ -3,7 +3,7 @@ import argparse
 import os
 import yaml
 from tqdm import tqdm
-from key import KeyConfig, Key
+from key import KeyConfig, Key, export_stl, export_brep, export_step, Mesher
 from stem import stem_from_config
 
 parser = argparse.ArgumentParser(
@@ -41,10 +41,22 @@ if __name__ == '__main__':
 
         out_path = os.path.join(args.output_path, f"{key_name}.{args.format}")
         if args.format == 'stl':
-            key.shape().export_stl(out_path)
+            shape_to_export = key.shape(return_components=False)
+            export_stl(shape_to_export, out_path)
         elif args.format == 'brep':
-            key.shape().export_brep(out_path)
+            shape_to_export = key.shape(return_components=False)
+            export_brep(shape_to_export, out_path)
         elif args.format == 'step':
-            key.shape().export_step(out_path)
+            shape_to_export = key.shape(return_components=False)
+            export_step(shape_to_export, out_path)
         elif args.format == '3mf':
-            key.shape().export_3mf(out_path, 1e-3, 0.1, Unit.MILLIMETER)
+            key_body, legend_parts = key.shape(return_components=True)
+            
+            mesher = Mesher()
+            mesher.add_shape(key_body)
+            for legend_part in legend_parts:
+                if legend_part:
+                    mesher.add_shape(legend_part)
+            mesher.write(out_path)
+        else:
+            print(f"Warning: Unsupported format '{args.format}' for key '{key_name}'")

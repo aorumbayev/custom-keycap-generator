@@ -1,0 +1,33 @@
+keys:
+    q:
+        base: R2
+        width: 1.0
+        letter: "Q"
+    w:
+        base: R2
+        width: 1.0
+        letter: "W"
+    e:
+        base: R2
+        width: 1.0
+        letter: "E"
+    a:
+        base: R3
+        width: 1.0
+        letter: "A"
+    s:
+        base: R3
+        width: 1.0
+        letter: "S"
+    d:
+        base: R3
+        width: 1.0
+        letter: "D"
+    f:
+        base: R3
+        width: 1.0
+        bump: true
+        letter: "F"
+    left_shift:
+        base: R4
+        width: 2.25

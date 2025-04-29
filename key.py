@@ -2,6 +2,7 @@ from build123d import *
 import numpy as np
 from dataclasses import dataclass
 from stem import Stem
+from build123d import Color, Mesher
 
 
 @dataclass
@@ -24,6 +25,10 @@ class KeyConfig:
     back_dy: float
     width: float  # As a multiple of `key_h`
     bump: bool = False
+    # Multi-legend support
+    legend_center: str = ""
+    legend_top_left: str = ""
+    legend_top_right: str = ""
 
 class Key:
     def __init__(self, config: KeyConfig, stem: Stem):
@@ -57,6 +62,10 @@ class Key:
         self.stem_rad = 0.3
 
         self.bump = config.bump
+        # Store legends
+        self.legend_center = config.legend_center
+        self.legend_top_left = config.legend_top_left
+        self.legend_top_right = config.legend_top_right
 
         self.stem = stem
 
@@ -101,7 +110,12 @@ class Key:
             # Project front/back heights onto un-sloped planes
             back_dx = np.tan(self.back_slope) * back_dy
             front_dx = np.tan(self.front_slope) * front_dy
-            top_slope = (front_dy - back_dy) / (key_h - front_dx - back_dx)
+            # Avoid division by zero for flat keys
+            if abs(key_h - front_dx - back_dx) < self.eps:
+                 top_slope = 0.0
+            else:
+                top_slope = (front_dy - back_dy) / (key_h - front_dx - back_dx)
+
             front_dy_proj = front_dy + top_slope * front_dx
             back_dy_proj = back_dy - top_slope * back_dx
 
@@ -153,9 +167,18 @@ class Key:
                 )
         return part.part
 
-    def shape(self) -> Part:
+    def shape(self, return_components: bool = False) -> Part | tuple[Part, list[Part | None]]:
         """
-        Constructs the key's complete shape
+        Constructs the key's complete shape or its components (body + list of legends).
+
+        Args:
+            return_components (bool, optional): If True, returns a tuple of
+                                                (key_body, [legend_center, legend_tl, legend_tr]).
+                                                Otherwise, returns the combined part.
+                                                Defaults to False.
+
+        Returns:
+            Part | tuple[Part, list[Part | None]]: Combined shape or tuple of components.
         """
 
         # Construct hollow key shell via boolean operations
@@ -174,24 +197,129 @@ class Key:
 
         # Add the stem
         cross = self.stem.build(self)
-        shape = shell + filler + cross
+        # Combine base parts
+        key_body = shell + filler + cross
 
-        # Fillet some inside edges, for a bit more strength
-        # (this can easily crash if `inner_rad` is too large)
+        # Fillet some inside edges, for strength
         if self.inner_rad > 0.0:
-            shape = shape.fillet(
-                edge_list=self.stem.select_inner_rad_edges(self, shape),
+            key_body = key_body.fillet(
+                edge_list=self.stem.select_inner_rad_edges(self, key_body),
                 radius=self.inner_rad - self.eps,
             )
         
+        # Add bump if needed
         if self.bump:
-            with BuildPart() as bump:
+            with BuildPart() as bump_part:
                 y = self.stem_depth + self.inner_rad + self.eps
                 with BuildSketch(Plane.XY.offset(y)) as sketch:
                     with Locations((0, -0.2 * self.key_h)):
                         Rectangle(6, 2)
                     fillet(sketch.vertices(), 0.999)
                 extrude(amount=self.max_front_height - y - 2)
-            shape += bump.part
+            key_body += bump_part.part
 
-        return shape
+        # --- Legend Part Generation ---
+        legend_parts: list[Part | None] = [None, None, None] # Center, TL, TR
+        emboss_height = 1.0 # Set emboss height to 1mm
+
+        # Find top face (needed for normals and points)
+        top_face = None
+        try:
+            # Ensure we get the profile *without* the stem cutout for surface calculations
+            outer_profile_no_shift = self._outer_key_profile() 
+            top_face = outer_profile_no_shift.faces().sort_by(Axis.Z)[-1]
+            top_center_on_face = top_face.center()
+            # We still need a general Z reference, slightly above the absolute center
+            base_z_ref = top_center_on_face.Z + self.eps 
+        except (IndexError, RuntimeError):
+            print(f"Warning: Could not reliably find top face for legends.")
+            # Fallback Z, but normal/point finding will fail later if top_face is None
+            base_z_ref = self.max_height
+
+        # Helper function to create legend part
+        def create_legend(text: str, font_size: float, position: tuple[float, float], alignment: tuple[Align, Align]) -> Part | None:
+            if not text or top_face is None:
+                return None
+            
+            # 1. Find target point on the actual surface
+            #    Start with an approximate target point in 3D space
+            approx_target_pt = Vector(position[0], position[1], base_z_ref)
+            try:
+                # Use closest_points with a temporary Vertex
+                target_vertex = Vertex(approx_target_pt)
+                # Attempt to get the closest point Vector directly
+                closest_data = top_face.closest_points(target_vertex)
+                
+                # Check if the result is a Vector (or potentially a tuple containing one)
+                if isinstance(closest_data, Vector):
+                    surface_pt = closest_data
+                elif isinstance(closest_data, tuple) and closest_data and isinstance(closest_data[0], Vector):
+                     # Handle potential tuple return like (Vector(point_on_face), Vector(point_on_vertex))
+                     surface_pt = closest_data[0]
+                elif isinstance(closest_data, tuple) and closest_data and isinstance(closest_data[0], list) and closest_data[0] and isinstance(closest_data[0][0], Vector):
+                    # Handle potential nested list return like ( [Vector(...)] , [...] )
+                    surface_pt = closest_data[0][0]
+                else:
+                    raise RuntimeError(f"Unexpected result from closest_points: {type(closest_data)}")
+
+                # Get the normal vector at that surface point
+                surface_normal = top_face.normal_at(surface_pt)
+            except (RuntimeError, IndexError, TypeError, AttributeError) as e: # Catch potential errors more broadly
+                # Handle cases where finding points/normal might fail
+                print(f"Warning: Could not find surface point/normal for legend '{text}': {e}. Skipping.")
+                return None
+
+            # 2. Create the tangent plane slightly offset outwards
+            legend_origin = surface_pt + surface_normal * self.eps
+            legend_plane = Plane(origin=legend_origin, z_dir=surface_normal)
+
+            # 3. Build the text on the tangent plane and extrude
+            with BuildPart() as part_builder:
+                with BuildSketch(legend_plane):
+                    Text(
+                        text,
+                        font_size=font_size,
+                        font_style=FontStyle.BOLD,
+                        align=alignment
+                    )
+                # Extrude along the plane's normal (which is the surface normal)
+                extrude(amount=emboss_height)
+            return part_builder.part
+
+        # 1. Center Legend
+        center_font_size = self.key_h * 0.4
+        legend_parts[0] = create_legend(self.legend_center, center_font_size, (0, 0), (Align.CENTER, Align.CENTER))
+
+        # 2. Top-Left Legend
+        corner_font_size = self.key_h * 0.2
+        tl_x = -self.key_w * 0.30
+        tl_y = self.key_h * 0.30
+        legend_parts[1] = create_legend(self.legend_top_left, corner_font_size, (tl_x, tl_y), (Align.CENTER, Align.CENTER))
+
+        # 3. Top-Right Legend
+        tr_x = self.key_w * 0.30
+        tr_y = self.key_h * 0.30
+        legend_parts[2] = create_legend(self.legend_top_right, corner_font_size, (tr_x, tr_y), (Align.CENTER, Align.CENTER))
+
+        # --- Assign Colors (only if returning components) ---
+        if return_components:
+            key_body.color = Color(0.1, 0.1, 0.1) # Dark grey/Black (Body)
+            legend_color_center = Color(0.9, 0.9, 0.9) # White (Center Legend)
+            legend_color_corner = Color(0.7, 0.7, 0.9) # Light Blue (Corner Legends - example)
+
+            if legend_parts[0]: legend_parts[0].color = legend_color_center
+            if legend_parts[1]: legend_parts[1].color = legend_color_corner
+            if legend_parts[2]: legend_parts[2].color = legend_color_corner
+
+
+        # --- Return Logic ---
+        if return_components:
+            # Return separate body and list of legend parts
+            return key_body, legend_parts
+        else:
+            # Return combined shape
+            final_shape = key_body
+            for part in legend_parts:
+                if part:
+                    final_shape += part
+            return final_shape
