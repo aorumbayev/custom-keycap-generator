@@ -56,8 +56,6 @@ keys:
             base: R3,
             width: 1.0,
             legend_center: Esc,
-            legend_top_left: Del,
-            legend_top_right: Del,
         }
     # Left Half - Row 1
     key_L1_0:
@@ -65,68 +63,55 @@ keys:
             base: R3,
             width: 1.0,
             legend_center: Ctrl,
-            legend_top_left: Del,
-            legend_top_right: Del,
         }
     key_L1_1:
         {
             base: R3,
             width: 1.0,
             legend_center: A,
-            legend_top_left: Ctrl,
-            legend_top_right: F1,
         }
     key_L1_2:
         {
             base: R3,
             width: 1.0,
             legend_center: S,
-            legend_top_left: Gui,
-            legend_top_right: F2,
         }
     key_L1_3:
         {
             base: R3,
             width: 1.0,
             legend_center: D,
-            legend_top_left: Alt,
-            legend_top_right: F3,
         }
-    key_L1_4: { base: R3, width: 1.0, legend_center: F, legend_top_right: F4 }
-    key_L1_5: { base: R3, width: 1.0, legend_center: G, legend_top_right: F5 }
-    key_L1_6: { base: R3, width: 1.0, legend_center: Alt, legend_top_right: F6 }
+    key_L1_4: { base: R3, width: 1.0, legend_center: F }
+    key_L1_5: { base: R3, width: 1.0, legend_center: G }
+    key_L1_6: { base: R3, width: 1.0, legend_center: Alt }
     # Left Half - Row 2
     key_L2_0: {
             base: R3,
             width: 1.0,
             legend_center: Shift,
-            legend_top_right: "~",
-        } # Layer 1 KC_TRNS mapped to None
-    key_L2_1: { base: R3, width: 1.0, legend_center: Z, legend_top_right: F7 }
-    key_L2_2: { base: R3, width: 1.0, legend_center: X, legend_top_right: F8 }
-    key_L2_3: { base: R3, width: 1.0, legend_center: C, legend_top_right: F9 }
-    key_L2_4: { base: R3, width: 1.0, legend_center: V, legend_top_right: F10 }
-    key_L2_5: { base: R3, width: 1.0, legend_center: B, legend_top_right: F11 }
+        }
+    key_L2_1: { base: R3, width: 1.0, legend_center: Z }
+    key_L2_2: { base: R3, width: 1.0, legend_center: X }
+    key_L2_3: { base: R3, width: 1.0, legend_center: C }
+    key_L2_4: { base: R3, width: 1.0, legend_center: V }
+    key_L2_5: { base: R3, width: 1.0, legend_center: B }
     # Left Half - Row 3 (Thumb Cluster/Bottom Row)
-    key_L3_3: { base: R3, width: 1.0, legend_center: Gui } # Layer 1/2 KC_TRNS
-    key_L3_4: { base: R3, width: 1.0, legend_center: L1 } # Layer 1/2 KC_TRNS
+    key_L3_3: { base: R3, width: 1.0, legend_center: Gui }
+    key_L3_4: { base: R3, width: 1.0, legend_center: MO(1) }
     key_L3_5:
         {
             base: R3,
             width: 1.0,
             legend_center: Space,
-            legend_top_left: "↓",
-            legend_top_right: "↓",
         }
 
-    # Right Half - Row 0 (Index 4 in JSON)
+    # Right Half - Row 0
     key_R0_0: {
             base: R3,
             width: 1.0,
-            legend_center: Esc,
-            legend_top_left: Del,
-            legend_top_right: Del,
-        } # Reuse Esc from Left 0,6 L0 KC_ESCAPE
+            legend_center: "←",
+        }
     key_R0_1:
         {
             base: R3,
@@ -157,7 +142,7 @@ keys:
             width: 1.0,
             legend_center: O,
             legend_top_left: "9",
-            legend_top_right: (,
+            legend_top_right: "(",
         }
     key_R0_5:
         {
@@ -165,105 +150,272 @@ keys:
             width: 1.0,
             legend_center: P,
             legend_top_left: "0",
-            legend_top_right: ),
+            legend_top_right: ")",
         }
     key_R0_6: {
             base: R3,
             width: 1.0,
-            legend_center: "←",
-            legend_top_left: Del,
-            legend_top_right: Del,
-        } # KC_BSPACE
-    # Right Half - Row 1 (Index 5 in JSON)
+            legend_center: Esc,
+        }
+    # Right Half - Row 1
     key_R1_0:
         {
             base: R3,
             width: 1.0,
             legend_center: Alt,
-            legend_top_left: Home,
-            legend_top_right: "`",
         }
     key_R1_1:
         {
             base: R3,
             width: 1.0,
             legend_center: H,
-            legend_top_left: "←",
-            legend_top_right: "-",
         }
     key_R1_2:
         {
             base: R3,
             width: 1.0,
             legend_center: J,
-            legend_top_left: "↓",
-            legend_top_right: "+",
         }
     key_R1_3:
         {
             base: R3,
             width: 1.0,
             legend_center: K,
-            legend_top_left: "↑",
-            legend_top_right: "[",
         }
     key_R1_4:
         {
             base: R3,
             width: 1.0,
             legend_center: L,
-            legend_top_left: "→",
-            legend_top_right: "]",
         }
     key_R1_5:
         {
             base: R3,
             width: 1.0,
             legend_center: ";",
-            legend_top_left: End,
-            legend_top_right: '\',
         }
     key_R1_6: {
             base: R3,
             width: 1.0,
             legend_center: "'",
-            legend_top_right: F12,
-        } # Layer 1 KC_NO
-    # Right Half - Row 2 (Index 6 in JSON)
+        }
+    # Right Half - Row 2
     key_R2_0: {
             base: R3,
             width: 1.0,
             legend_center: Shift,
-            legend_top_right: "~",
-        } # Layer 1 KC_NO
-    key_R2_1: { base: R3, width: 1.0, legend_center: N, legend_top_right: "_" }
+        }
+    key_R2_1: { base: R3, width: 1.0, legend_center: N }
     key_R2_2:
         {
             base: R3,
             width: 1.0,
             legend_center: M,
-            legend_top_left: PgUp,
-            legend_top_right: "=",
         }
     key_R2_3:
         {
             base: R3,
             width: 1.0,
             legend_center: ",",
-            legend_top_left: PgDn,
-            legend_top_right: "{",
         }
     key_R2_4:
-        { base: R3, width: 1.0, legend_center: ".", legend_top_right: "}" }
+        { base: R3, width: 1.0, legend_center: "." }
     key_R2_5:
-        { base: R3, width: 1.0, legend_center: "/", legend_top_right: "|" }
-    # Right Half - Row 3 (Index 7 in JSON) (Thumb Cluster/Bottom Row)
-    key_R3_3: { base: R3, width: 1.0, legend_center: Gui } # Layer 1/2 KC_TRNS
-    key_R3_4: { base: R3, width: 1.0, legend_center: L2 } # Layer 1/2 KC_TRNS
+        { base: R3, width: 1.0, legend_center: "/" }
+    # Right Half - Row 3 (Thumb Cluster/Bottom Row)
+    key_R3_3: { base: R3, width: 1.0, legend_center: Gui }
+    key_R3_4: { base: R3, width: 1.0, legend_center: MO(2) }
     key_R3_5: {
             base: R3,
             width: 1.0,
-            legend_center: ↵,
-            legend_top_left: "↑",
-            legend_top_right: "↑",
-        } # Enter
+            legend_center: Enter,
+        }
+
+# Second layer legends
+layer_1:
+    key_L0_0:
+        {
+            legend_center: "`",
+            legend_top_left: "~",
+        }
+    key_L0_1:
+        {
+            legend_center: "1",
+            legend_top_left: "!",
+        }
+    key_L0_2:
+        {
+            legend_center: "2",
+            legend_top_left: "@",
+        }
+    key_L0_3:
+        {
+            legend_center: "3",
+            legend_top_left: "#",
+        }
+    key_L0_4:
+        {
+            legend_center: "4",
+            legend_top_left: "$",
+        }
+    key_L0_5:
+        {
+            legend_center: "5",
+            legend_top_left: "%",
+        }
+
+    key_R0_1:
+        {
+            legend_center: "6",
+            legend_top_left: "^",
+        }
+    key_R0_2:
+        {
+            legend_center: "7",
+            legend_top_left: "&",
+        }
+    key_R0_3:
+        {
+            legend_center: "8",
+            legend_top_left: "*",
+        }
+    key_R0_4:
+        {
+            legend_center: "9",
+            legend_top_left: "(",
+        }
+    key_R0_5:
+        {
+            legend_center: "0",
+            legend_top_left: ")",
+        }
+
+    key_R1_1:
+        {
+            legend_center: "←",
+        }
+    key_R1_2:
+        {
+            legend_center: "↓",
+        }
+    key_R1_3:
+        {
+            legend_center: "↑",
+        }
+    key_R1_4:
+        {
+            legend_center: "→",
+        }
+    key_R1_5:
+        {
+            legend_center: End,
+        }
+    key_R1_0:
+        {
+            legend_center: Home,
+        }
+
+# Third layer legends
+layer_2:
+    key_L0_0:
+        {
+            legend_center: "~",
+        }
+    key_L0_1:
+        {
+            legend_center: "!",
+        }
+    key_L0_2:
+        {
+            legend_center: "@",
+        }
+    key_L0_3:
+        {
+            legend_center: "#",
+        }
+    key_L0_4:
+        {
+            legend_center: "$",
+        }
+    key_L0_5:
+        {
+            legend_center: "%",
+        }
+
+    key_L1_1:
+        {
+            legend_center: F1,
+        }
+    key_L1_2:
+        {
+            legend_center: F2,
+        }
+    key_L1_3:
+        {
+            legend_center: F3,
+        }
+    key_L1_4:
+        {
+            legend_center: F4,
+        }
+    key_L1_5:
+        {
+            legend_center: F5,
+        }
+    key_L1_6:
+        {
+            legend_center: F6,
+        }
+
+    key_L2_1:
+        {
+            legend_center: F7,
+        }
+    key_L2_2:
+        {
+            legend_center: F8,
+        }
+    key_L2_3:
+        {
+            legend_center: F9,
+        }
+    key_L2_4:
+        {
+            legend_center: F10,
+        }
+    key_L2_5:
+        {
+            legend_center: F11,
+        }
+
+    key_R1_6:
+        {
+            legend_center: F12,
+        }
+
+# Fourth layer legends (special functions)
+layer_3:
+    key_R0_1:
+        {
+            legend_center: VOL+,
+        }
+    key_R0_2:
+        {
+            legend_center: VOL-,
+        }
+    key_R0_3:
+        {
+            legend_center: MUTE,
+        }
+    key_R0_4:
+        {
+            legend_center: NEXT,
+        }
+    key_R0_5:
+        {
+            legend_center: PLAY,
+        }
+    key_R0_6:
+        {
+            legend_center: PREV,
+        }
